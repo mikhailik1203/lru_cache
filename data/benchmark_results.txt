@@ -1,0 +1,43 @@
+Cache (size 1000):
+ Throughput of adding 100000000 values into cache 10590404424 nsec
+ Latency of adding into cache: min=61 nsec; 50%=126 nsec; 95%=182 nsec; 99%=218 nsec; max=20750 nsec
+CacheArr (size 1000):
+ Throughput of adding 100000000 values into cache 10973027187 nsec
+ Latency of adding into cache arr: min=61 nsec; 50%=134 nsec; 95%=190 nsec; 99%=223 nsec; max=18561 nsec
+Vanilla Cache (size 1000):
+ Throughput of adding 100000000 values into cache 12297685871 nsec
+ Latency of adding into cache: min=74 nsec; 50%=145 nsec; 95%=199 nsec; 99%=235 nsec; max=14229 nsec
+Cache (size 1000, summ=4982045285100000):
+ Throughput of getting 100000000 values from cache 1700420334 nsec
+ Latency of getting value from cache: min=28 nsec; 50%=44 nsec; 95%=65 nsec; 99%=77 nsec; max=13169 nsec
+Summ=4982045285100000
+CacheArr (size 1000, summ=4982045285100000):
+ Throughput of getting 100000000 values from cache 1601449319 nsec
+ Latency of getting value from cache arr: min=28 nsec; 50%=44 nsec; 95%=66 nsec; 99%=76 nsec; max=15344 nsec
+Summ=4982045285100000
+Vanilla Cache (size 1000, res=4982045285100000):
+ Throughput of getting 100000000 values from cache 5719110245 nsec
+ Latency of getting value from cache: min=56 nsec; 50%=71 nsec; 95%=115 nsec; 99%=138 nsec; max=14889 nsec
+ summ= 4982045285100000
+--------------------------------------------------------
+Cache (size 1000):
+ Throughput of adding 100000000 values into cache 10818954421 nsec
+ Latency of adding into cache: min=63 nsec; 50%=134 nsec; 95%=199 nsec; 99%=246 nsec; max=23625 nsec
+CacheArr (size 1000):
+ Throughput of adding 100000000 values into cache 11401263979 nsec
+ Latency of adding into cache arr: min=63 nsec; 50%=131 nsec; 95%=196 nsec; 99%=244 nsec; max=23993 nsec
+Vanilla Cache (size 1000):
+ Throughput of adding 100000000 values into cache 12954357460 nsec
+ Latency of adding into cache: min=88 nsec; 50%=150 nsec; 95%=220 nsec; 99%=293 nsec; max=24040 nsec
+Cache (size 1000, summ=4982045285100000):
+ Throughput of getting 100000000 values from cache 1719727662 nsec
+ Latency of getting value from cache: min=28 nsec; 50%=48 nsec; 95%=69 nsec; 99%=84 nsec; max=18983 nsec
+Summ=4982045285100000
+CacheArr (size 1000, summ=4982045285100000):
+ Throughput of getting 100000000 values from cache 1729541713 nsec
+ Latency of getting value from cache arr: min=37 nsec; 50%=49 nsec; 95%=71 nsec; 99%=89 nsec; max=3176722 nsec
+Summ=4982045285100000
+Vanilla Cache (size 1000, res=4982045285100000):
+ Throughput of getting 100000000 values from cache 6170782980 nsec
+ Latency of getting value from cache: min=64 nsec; 50%=81 nsec; 95%=134 nsec; 99%=168 nsec; max=20904 nsec
+ summ= 4982045285100000
