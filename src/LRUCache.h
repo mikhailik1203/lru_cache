@@ -4,15 +4,21 @@
 #include<list>
 
 namespace cache {
+    /// @brief  Vanilla implementation of the LRU cache
+    /// @tparam K - key type 
+    /// @tparam V - value type
+    /// @tparam capacity of the cache
     template<typename K, typename V, int capacity = 100>
     class LRUCache {
-
     private:
         std::list<K> items;
     public:
         std::unordered_map<K, std::pair<V, typename std::list<K>::iterator>> keyValuesMap;
 
     public:
+        /// @brief Adds new key-value to the cache
+        /// @param key
+        /// @param value
         void add(const K key, const V value) {
             auto pos = keyValuesMap.find(key);
             if (pos == keyValuesMap.end()) {
@@ -29,6 +35,9 @@ namespace cache {
             }
         }
 
+        /// @brief Locates key in the cache and returns value
+        /// @param key 
+        /// @return value or none, if key is not found
         std::optional<V> get(const K key) {
             auto pos = keyValuesMap.find(key);
             if (pos == keyValuesMap.end())

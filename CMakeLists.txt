@@ -6,7 +6,7 @@ add_compile_definitions(__GCC__)
 
 add_executable(CacheData ./src/main.cpp)
 
-add_executable(CacheDataTest ./test/test.cpp)
+add_executable(CacheDataTest ./test/test.cpp ./test/testCacheCont.cpp ./test/testHashVector.cpp)
 
 add_executable(CacheDataBenchmark ./benchmarks/bench_test.cpp)
 

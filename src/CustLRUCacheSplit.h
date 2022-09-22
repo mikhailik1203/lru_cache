@@ -1,15 +1,22 @@
 #pragma once
 
-#include<optional>
+#include <optional>
 #include <array>
 #include <unordered_map>
+#include <iostream>
 
 namespace cache {
+    
+    /// @brief LRU cache based on vector container (to reduce allocations). Key, value and auxiliary parameters 
+    ///     stored in separate containers 
+    /// @tparam KeyT 
+    /// @tparam ValT 
+    /// @tparam CapacityT 
     template<typename KeyT, typename ValT, int CapacityT>
-    class CacheArrCont {
+    class CustLRUCacheSplit {
         const int DUMMY_IDX = 0;
     public:
-        CacheArrCont() {
+        CustLRUCacheSplit() {
             key_to_idx_.reserve(CapacityT);
             // add dummy item to avoid checking negative index values
             key_data_.reserve(CapacityT + 1);
@@ -18,62 +25,65 @@ namespace cache {
             val_data_.push_back(ValT());
             links_data_.reserve(CapacityT + 1);
             links_data_.push_back({DUMMY_IDX, DUMMY_IDX});
+            cache_has_space_ = true;
         }
 
-        ~CacheArrCont() = default;
+        ~CustLRUCacheSplit() = default;
 
-        void add(const KeyT &key, const ValT &val) {
-            auto idx_it = key_to_idx_.find(key);
-            if (key_to_idx_.end() == idx_it) {
-                if (val_data_.size() <= CapacityT) {
-                    auto prev_first = first_idx;
-                    first_idx = val_data_.size();
-                    //data_.push_back(Node{key, val, DUMMY_IDX, prev_first});
-                    key_data_.push_back(key);
-                    val_data_.push_back(val);
-                    links_data_.push_back({DUMMY_IDX, prev_first});
-                    //data_[prev_first].next_idx_ = first_idx;
-                    links_data_[prev_first].next_ = first_idx;
-                } else {
-                    // update first_idx and last_idx
-                    auto prev_idx = first_idx;
-                    first_idx = last_idx;
-                    //last_idx = data_[first_idx].next_idx_;
-                    last_idx = links_data_[first_idx].next_;
-
-                    //data_[last_idx].prev_idx_ = DUMMY_IDX;
-                    links_data_[last_idx].prev_ = DUMMY_IDX;
-                    //key_to_idx_.erase(data_[first_idx].key_);
-                    key_to_idx_.erase(key_data_[first_idx]);
-                    //data_[first_idx] = Node{key, val, DUMMY_IDX, prev_idx};
-                    key_data_[first_idx] = key;
-                    val_data_[first_idx] = val;
-                    links_data_[first_idx] = {DUMMY_IDX, prev_idx};
-                    //data_[prev_idx].next_idx_ = first_idx;
-                    links_data_[prev_idx].next_ = first_idx;
-                }
-                key_to_idx_[key] = first_idx;
-            } else {
-                auto key_idx = idx_it->second;
-                auto prev_first = first_idx;
-                move_front(key_idx);
-                //data_[key_idx] = Node{key, val, DUMMY_IDX, prev_first};
-                key_data_[key_idx] = key;
-                val_data_[key_idx] = val;
-                links_data_[key_idx] = {DUMMY_IDX, prev_first};
-                idx_it->second = first_idx;
-            }
-        }
+        /// @brief  just to simplify implementation - disable copy and move
+        CustLRUCacheSplit(const CustLRUCacheSplit &) = delete;
+        CustLRUCacheSplit(CustLRUCacheSplit &&) = delete;
+        CustLRUCacheSplit &operator=(const CustLRUCacheSplit &) = delete;
+        CustLRUCacheSplit &operator=(CustLRUCacheSplit &&) = delete;
 
         std::optional<ValT> get(const KeyT &key) {
             auto idx_it = key_to_idx_.find(key);
             if (key_to_idx_.end() != idx_it) {
                 auto key_idx = idx_it->second;
-                move_front(key_idx);
-                //return data_[key_idx].val_;
+                if (first_idx != key_idx) {
+                    move_front(key_idx);
+                }
                 return val_data_[key_idx];
             }
             return std::optional<ValT>();
+        }
+
+        void add(const KeyT &key, const ValT &val) {
+            auto idx_it = key_to_idx_.find(key);
+            if (key_to_idx_.end() == idx_it) {
+                if (cache_has_space_) { /// add new element as first of the cache
+                    auto prev_first = first_idx;
+                    first_idx = val_data_.size();
+                    key_data_.push_back(key);
+                    val_data_.push_back(val);
+                    links_data_.push_back({DUMMY_IDX, prev_first});
+                    links_data_[prev_first].next_ = first_idx;
+                    cache_has_space_ = (val_data_.size() <= CapacityT);
+                } else {
+                    // replace last item in cache with new key&value and make it first
+                    auto prev_idx = first_idx;
+                    first_idx = last_idx;
+                    last_idx = links_data_[first_idx].next_;
+
+                    links_data_[last_idx].prev_ = DUMMY_IDX;
+                    key_to_idx_.erase(key_data_[first_idx]);
+                    key_data_[first_idx] = key;
+                    val_data_[first_idx] = val;
+                    links_data_[first_idx] = {DUMMY_IDX, prev_idx};
+                    links_data_[prev_idx].next_ = first_idx;
+                }
+                key_to_idx_[key] = first_idx;
+                if(CapacityT < key_to_idx_.size()){
+                    std::cerr<< "Adding elements greater than capacity "<< key<< std::endl;
+                }
+
+            } else { /// key exist in cache - just make it first and update value
+                auto key_idx = idx_it->second;
+                if (first_idx != key_idx) {
+                    move_front(key_idx);
+                }
+                val_data_[key_idx] = val; ///// update value in case it is changed
+            }
         }
 
         using KeyToIdxT = std::unordered_map<KeyT, int>;
@@ -82,23 +92,13 @@ namespace cache {
 
     private:
         void move_front(int curr_idx) {
-            if (first_idx != curr_idx) {
-                /*auto &curr_data = data_[curr_idx];
-                auto prev_idx = curr_data.prev_idx_;
-                auto next_idx = curr_data.next_idx_;
-                data_[prev_idx].next_idx_ = next_idx;
-                data_[next_idx].prev_idx_ = prev_idx;*/
-                auto curr_lnk = links_data_[curr_idx];
-                links_data_[curr_lnk.prev_].next_ = curr_lnk.next_;
-                links_data_[curr_lnk.next_].prev_ = curr_lnk.prev_;
+            auto curr_lnk = links_data_[curr_idx];
+            links_data_[curr_lnk.prev_].next_ = curr_lnk.next_;
+            links_data_[curr_lnk.next_].prev_ = curr_lnk.prev_;
 
-                //curr_data.prev_idx_ = first_idx;
-                //curr_data.next_idx_ = DUMMY_IDX;
-                links_data_[curr_idx] = {DUMMY_IDX, first_idx};
-                //data_[first_idx].next_idx_ = curr_idx;
-                links_data_[first_idx].next_ = curr_idx;
-                first_idx = curr_idx;
-            }
+            links_data_[curr_idx] = {DUMMY_IDX, first_idx};
+            links_data_[first_idx].next_ = curr_idx;
+            first_idx = curr_idx;
         }
 
     private:
@@ -117,5 +117,6 @@ namespace cache {
         KeyToIdxT key_to_idx_;
         int first_idx = DUMMY_IDX;
         int last_idx = DUMMY_IDX + 1;
+        bool cache_has_space_ = true;
     };
 }
