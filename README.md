@@ -2,9 +2,13 @@
 Low latency LRU cache 
 
 LRUCache - vanilla implementation of the LRU cache, based on unordered_map and list containers. It is used to compare performance.
+
 CustLRUCache - custom implementation, based on unordered_map and vector containers to reduce mem allocations.
+
 CustLRUCacheSplit - custom implementation, based on unordered_map and separate vector containers for keys and values.
+
 HashVector - custom hash table implementation, based on vector container.
+
 CustLRUCacheCHV - custom implementation, based on HashVector and separate vector containers for keys and values.
 
 Throughput (nsec) of adding 100000000 elements to the cache:
