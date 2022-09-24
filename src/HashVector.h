@@ -110,7 +110,6 @@ namespace cache {
     protected:
         struct ChunkData {
             int first_idx_ = DUMMY_IDX;
-            int last_idx_ = DUMMY_IDX;
         };
         using HashChunksT = std::vector<ChunkData>;
         HashChunksT chunks_;

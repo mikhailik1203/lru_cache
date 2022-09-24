@@ -15,6 +15,11 @@ namespace cache {
     public:
         std::unordered_map<K, std::pair<V, typename std::list<K>::iterator>> keyValuesMap;
 
+        LRUCache(){
+            keyValuesMap.reserve(capacity);
+        }
+        ~LRUCache() = default;
+
     public:
         /// @brief Adds new key-value to the cache
         /// @param key
