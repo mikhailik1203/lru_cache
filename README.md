@@ -92,3 +92,4 @@ CustLRUCache | 22 | 55 | 97 | 121 | 20525
 CustLRUCacheSplit | 22 | 55 | 98 | 123 | 11409
 CustLRUCacheCHV | 22 | 38 | 54 | 64 | 10506
 
+Raw data available in the /data/benchmark_results.txt
