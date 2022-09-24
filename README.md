@@ -11,7 +11,7 @@ HashVector - custom hash table implementation, based on std::vector container - 
 
 CustLRUCacheCHV - custom implementation, based on HashVector and separate std::vector containers for keys and values.
 
-
+--------------------------------------------------------------------------------------------------
 Benchmarks inserts 10mln int key-values pairs to the cache. Cache size is 1000 and 10000 elements:
 
 Throughput (nsec) of adding 10,000,000 elements to the cache:
@@ -38,6 +38,7 @@ CustLRUCache | 55 | 138 | 208 | 252 | 884063
 CustLRUCacheSplit | 58 | 139 | 210 | 253 | 752277
 CustLRUCacheCHV | 39 | 61 | 87 | 101 | 14309
 
+--------------------------------------------------------------------------------------------------
 Benchmarks retrieves values of 10mln int existing keys from cache. Cache size is 1000 and 10000 elements:
 
 Throughput (nsec) of getting of 10,000,000 elements from the cache:
@@ -64,6 +65,7 @@ CustLRUCache | 28 | 72 | 109 | 129 | 12457
 CustLRUCacheSplit | 28 | 70 | 106 | 127 | 11597
 CustLRUCacheCHV | 28 | 49 | 71 | 82 | 11146
 
+--------------------------------------------------------------------------------------------------
 Benchmarks retrieves values of 10mln int not-existing keys from cache (cache-miss scenario). Cache size is 1000 and 10000 elements:
 
 Throughput (nsec) of getting of 10,000,000 missed elements from the cache:
