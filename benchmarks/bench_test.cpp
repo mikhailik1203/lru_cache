@@ -20,7 +20,7 @@ namespace {
     const int CACHE_SIZE = 1000;
 #else
     const uint64_t BENCHMARK_DATA_COUNT = 10000000; //10000000
-    const int CACHE_SIZE = 1000;
+    const int CACHE_SIZE = 10000;
 #endif
 
     using CacheValuesT = std::vector<std::pair<int, int>>;
@@ -36,7 +36,51 @@ namespace {
         sched_setaffinity(0, sizeof(g_mask), &g_mask);
     }
 
-    void benchmark_vanilla_add_value(const CacheValuesT &values) {
+    uint64_t benchmark_get_timer() {
+        uint64_t avg_nsec = 0;        
+        { /// measure throughput
+            uint64_t thoughput_nsec = 0, dur = 0;
+            {
+                auto start_tm = std::chrono::high_resolution_clock::now();
+                for (size_t i = 0; i < BENCHMARK_DATA_COUNT; ++i) {
+                    auto mid_tm = std::chrono::high_resolution_clock::now();
+                    dur = std::chrono::duration_cast<std::chrono::nanoseconds>(mid_tm - start_tm).count();
+                }
+                auto finish_tm = std::chrono::high_resolution_clock::now();
+                thoughput_nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(finish_tm - start_tm).count();
+            }
+            avg_nsec = thoughput_nsec/BENCHMARK_DATA_COUNT;
+            std::cout << " Throughput of get_timer " << BENCHMARK_DATA_COUNT << " time is " << thoughput_nsec
+                      << " nsec, avg="<< avg_nsec<< "nsec per call"<< std::endl;
+        }
+
+        { /// measure latency
+            using LatencyT = std::vector<uint64_t>;
+            LatencyT lat_data;
+            lat_data.reserve(BENCHMARK_DATA_COUNT);
+
+            auto start_tm = std::chrono::high_resolution_clock::now();
+            for (size_t i = 0; i < BENCHMARK_DATA_COUNT; ++i) {
+                auto finish_tm = std::chrono::high_resolution_clock::now();
+                lat_data.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(finish_tm - start_tm).count());
+                start_tm = finish_tm;
+            }
+            std::sort(lat_data.begin(), lat_data.end());
+
+            size_t index_95perc = static_cast<double>(lat_data.size()) * 0.95;
+            size_t index_99perc = static_cast<double>(lat_data.size()) * 0.99;
+            std::cout << " Latency of get_timer: min=" << *lat_data.begin() << " nsec; 50%="
+                      << lat_data[lat_data.size() / 2] << " nsec; 95%=" << lat_data[index_95perc]
+                      << " nsec; 99%=" << lat_data[index_99perc] << " nsec; max=" << *lat_data.rbegin() << " nsec"
+                      << std::endl
+                      << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+        }
+        return avg_nsec;
+    }
+
+
+    void benchmark_vanilla_add_value(const CacheValuesT &values, uint64_t avg_timer) {
         { /// measure throughput
             LRUCache<int, int, CACHE_SIZE> cont;
 
@@ -76,12 +120,16 @@ namespace {
                       << " nsec; 99%=" << lat_data[index_99perc] << " nsec; max=" << *lat_data.rbegin() << " nsec"
                       << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
+
         }
     }
 
 
-    void benchmark_add_value(const CacheValuesT &values) {
+    void benchmark_add_value(const CacheValuesT &values, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCache<int, int, CACHE_SIZE> cont;
 
@@ -121,11 +169,14 @@ namespace {
                       << " nsec; 99%=" << lat_data[index_99perc] << " nsec; max=" << *lat_data.rbegin() << " nsec"
                       << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_arr_add_value(const CacheValuesT &values) {
+    void benchmark_arr_add_value(const CacheValuesT &values, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCacheSplit<int, int, CACHE_SIZE> cont;
 
@@ -165,11 +216,14 @@ namespace {
                       << " nsec; 99%=" << lat_data[index_99perc] << " nsec; max=" << *lat_data.rbegin() << " nsec"
                       << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_split_vect_add_value(const CacheValuesT &values) {
+    void benchmark_split_vect_add_value(const CacheValuesT &values, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCacheCHV<int, int, CACHE_SIZE> cont;
 
@@ -209,11 +263,14 @@ namespace {
                       << " nsec; 99%=" << lat_data[index_99perc] << " nsec; max=" << *lat_data.rbegin() << " nsec"
                       << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_vanilla_get_value(const CacheValuesT &values, const KeyValuesT &keys) {
+    void benchmark_vanilla_get_value(const CacheValuesT &values, const KeyValuesT &keys, uint64_t avg_timer) {
         { /// measure throughput
             LRUCache<int, int, CACHE_SIZE> cont;
             for (const auto &val: values) {
@@ -263,12 +320,14 @@ namespace {
                       << std::endl
                       << " summ= " << summ << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
-
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_get_value(const CacheValuesT &values, const KeyValuesT &keys) {
+    void benchmark_get_value(const CacheValuesT &values, const KeyValuesT &keys, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCache<int, int, CACHE_SIZE> cont;
             for (const auto &val: values) {
@@ -318,11 +377,14 @@ namespace {
                       << std::endl
                       << "Summ=" << summ << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_arr_get_value(const CacheValuesT &values, const KeyValuesT &keys) {
+    void benchmark_arr_get_value(const CacheValuesT &values, const KeyValuesT &keys, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCacheSplit<int, int, CACHE_SIZE> cont;
             for (const auto &val: values) {
@@ -372,11 +434,14 @@ namespace {
                       << std::endl
                       << "Summ=" << summ << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
         }
     }
 
-    void benchmark_arr_vector_get_value(const CacheValuesT &values, const KeyValuesT &keys) {
+    void benchmark_arr_vector_get_value(const CacheValuesT &values, const KeyValuesT &keys, uint64_t avg_timer) {
         { /// measure throughput
             CustLRUCacheCHV<int, int, CACHE_SIZE> cont;
             for (const auto &val: values) {
@@ -426,7 +491,11 @@ namespace {
                       << std::endl
                       << "Summ=" << summ << std::endl
                       << "\t" << *lat_data.begin()<< " | "<< lat_data[lat_data.size() / 2]<< " | "<< lat_data[index_95perc] << " | "
-                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl;
+                      << lat_data[index_99perc] << " | "<< *lat_data.rbegin()<< std::endl
+                      << "\t" << *lat_data.begin() - avg_timer<< " | "<< lat_data[lat_data.size() / 2] - avg_timer<< " | "
+                      << lat_data[index_95perc]  - avg_timer<< " | " << lat_data[index_99perc]  - avg_timer<< " | "
+                      << *lat_data.rbegin() - avg_timer << " - without avg timer latency"<< std::endl;
+
         }
     }
 
@@ -487,19 +556,21 @@ int main(int argc, char **argv) {
         std::cout<< "Hit/Miss keys were generated..."<< std::endl;
     }
  
-    benchmark_vanilla_add_value(values);
-    benchmark_add_value(values);
-    benchmark_arr_add_value(values);
-    benchmark_split_vect_add_value(values);
+    auto avg_timer_latency = benchmark_get_timer();
+    std::cout<< "-------------------------- Test add to cache ---------------------------------------"<< std::endl;
+    benchmark_vanilla_add_value(values, avg_timer_latency);
+    benchmark_add_value(values, avg_timer_latency);
+    benchmark_arr_add_value(values, avg_timer_latency);
+    benchmark_split_vect_add_value(values, avg_timer_latency);
     std::cout<< "-------------------------- Test hit cache ---------------------------------------"<< std::endl;
-    benchmark_vanilla_get_value(values, hit_keys);
-    benchmark_get_value(values, hit_keys);
-    benchmark_arr_get_value(values, hit_keys);
-    benchmark_arr_vector_get_value(values, hit_keys);
+    benchmark_vanilla_get_value(values, hit_keys, avg_timer_latency);
+    benchmark_get_value(values, hit_keys, avg_timer_latency);
+    benchmark_arr_get_value(values, hit_keys, avg_timer_latency);
+    benchmark_arr_vector_get_value(values, hit_keys, avg_timer_latency);
     std::cout<< "--------------------------- Test miss cache --------------------------------------"<< std::endl;
-    benchmark_vanilla_get_value(values, miss_keys);
-    benchmark_get_value(values, miss_keys);
-    benchmark_arr_get_value(values, miss_keys);
-    benchmark_arr_vector_get_value(values, miss_keys);
+    benchmark_vanilla_get_value(values, miss_keys, avg_timer_latency);
+    benchmark_get_value(values, miss_keys, avg_timer_latency);
+    benchmark_arr_get_value(values, miss_keys, avg_timer_latency);
+    benchmark_arr_vector_get_value(values, miss_keys, avg_timer_latency);
     return 1;
 }

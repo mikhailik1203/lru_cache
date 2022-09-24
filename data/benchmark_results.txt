@@ -1,123 +1,155 @@
 Key-values were generated...
 Key were prepared...
 Hit/Miss keys were generated...
+ Throughput of get_timer 10000000 time is 188777882 nsec, avg=18nsec per call
+ Latency of get_timer: min=15 nsec; 50%=19 nsec; 95%=24 nsec; 99%=25 nsec; max=11163 nsec
+	15 | 19 | 24 | 25 | 11163
+-------------------------- Test add to cache ---------------------------------------
 Vanilla LRUCache (size 1000):
- Throughput of adding 10000000 values into LRUCache 1187504067 nsec
- Latency of adding into LRUCache: min=87 nsec; 50%=138 nsec; 95%=189 nsec; 99%=221 nsec; max=12127 nsec
-	87 | 138 | 189 | 221 | 12127
+ Throughput of adding 10000000 values into LRUCache 1302110309 nsec
+ Latency of adding into LRUCache: min=75 nsec; 50%=142 nsec; 95%=206 nsec; 99%=239 nsec; max=14315 nsec
+	75 | 142 | 206 | 239 | 14315
+	57 | 124 | 188 | 221 | 14297 - without avg timer latency
 CustLRUCache (size 1000):
- Throughput of adding 10000000 values into CustLRUCache 1011177636 nsec
- Latency of adding into CustLRUCache: min=57 nsec; 50%=116 nsec; 95%=164 nsec; 99%=193 nsec; max=19748 nsec
-	57 | 116 | 164 | 193 | 19748
+ Throughput of adding 10000000 values into CustLRUCache 1017417578 nsec
+ Latency of adding into CustLRUCache: min=61 nsec; 50%=117 nsec; 95%=167 nsec; 99%=196 nsec; max=23453 nsec
+	61 | 117 | 167 | 196 | 23453
+	43 | 99 | 149 | 178 | 23435 - without avg timer latency
 CustLRUCacheSplit (size 1000):
- Throughput of adding 10000000 values into CustLRUCacheSplit 1024139675 nsec
- Latency of adding into CustLRUCacheSplit: min=56 nsec; 50%=117 nsec; 95%=170 nsec; 99%=198 nsec; max=10773 nsec
-	56 | 117 | 170 | 198 | 10773
+ Throughput of adding 10000000 values into CustLRUCacheSplit 1032457218 nsec
+ Latency of adding into CustLRUCacheSplit: min=58 nsec; 50%=117 nsec; 95%=167 nsec; 99%=197 nsec; max=21855 nsec
+	58 | 117 | 167 | 197 | 21855
+	40 | 99 | 149 | 179 | 21837 - without avg timer latency
 CustLRUCacheCHV (size 1000):
- Throughput of adding 10000000 values into CustLRUCacheCHV 395036726 nsec
- Latency of adding into CustLRUCacheCHV: min=40 nsec; 50%=59 nsec; 95%=79 nsec; 99%=91 nsec; max=11645 nsec
-	40 | 59 | 79 | 91 | 11645
+ Throughput of adding 10000000 values into CustLRUCacheCHV 396324411 nsec
+ Latency of adding into CustLRUCacheCHV: min=40 nsec; 50%=58 nsec; 95%=79 nsec; 99%=92 nsec; max=12984 nsec
+	40 | 58 | 79 | 92 | 12984
+	22 | 40 | 61 | 74 | 12966 - without avg timer latency
 -------------------------- Test hit cache ---------------------------------------
 Vanilla LRUCache (size 1000, res=50827332542027):
- Throughput of getting 10000000 values from LRUCache 568476315 nsec
- Latency of getting value from LRUCache: min=31 nsec; 50%=75 nsec; 95%=116 nsec; 99%=141 nsec; max=14889 nsec
+ Throughput of getting 10000000 values from LRUCache 591222965 nsec
+ Latency of getting value from LRUCache: min=31 nsec; 50%=78 nsec; 95%=120 nsec; 99%=147 nsec; max=12059 nsec
  summ= 50827332542027
-	31 | 75 | 116 | 141 | 14889
+	31 | 78 | 120 | 147 | 12059
+	13 | 60 | 102 | 129 | 12041 - without avg timer latency
 CustLRUCache (size 1000, summ=50827332542027):
- Throughput of getting 10000000 values from CustLRUCache 206421002 nsec
- Latency of getting value from CustLRUCache: min=28 nsec; 50%=43 nsec; 95%=64 nsec; 99%=76 nsec; max=11286 nsec
+ Throughput of getting 10000000 values from CustLRUCache 210227992 nsec
+ Latency of getting value from CustLRUCache: min=27 nsec; 50%=43 nsec; 95%=65 nsec; 99%=78 nsec; max=10511 nsec
 Summ=50827332542027
-	28 | 43 | 64 | 76 | 11286
+	27 | 43 | 65 | 78 | 10511
+	9 | 25 | 47 | 60 | 10493 - without avg timer latency
 CustLRUCacheSplit (size 1000, summ=50827332542027):
- Throughput of getting 10000000 values from CustLRUCacheSplit 200785297 nsec
- Latency of getting value from CustLRUCacheSplit: min=28 nsec; 50%=42 nsec; 95%=64 nsec; 99%=76 nsec; max=13383 nsec
+ Throughput of getting 10000000 values from CustLRUCacheSplit 207563369 nsec
+ Latency of getting value from CustLRUCacheSplit: min=27 nsec; 50%=42 nsec; 95%=64 nsec; 99%=76 nsec; max=14610 nsec
 Summ=50827332542027
-	28 | 42 | 64 | 76 | 13383
+	27 | 42 | 64 | 76 | 14610
+	9 | 24 | 46 | 58 | 14592 - without avg timer latency
 CustLRUCacheCHV (size 1000, summ=50827332542027):
- Throughput of getting 10000000 values from CustLRUCacheCHV 164640238 nsec
- Latency of getting value from CustLRUCacheCHV: min=28 nsec; 50%=40 nsec; 95%=56 nsec; 99%=67 nsec; max=11759 nsec
+ Throughput of getting 10000000 values from CustLRUCacheCHV 161481591 nsec
+ Latency of getting value from CustLRUCacheCHV: min=28 nsec; 50%=40 nsec; 95%=57 nsec; 99%=68 nsec; max=12355 nsec
 Summ=50827332542027
-	28 | 40 | 56 | 67 | 11759
+	28 | 40 | 57 | 68 | 12355
+	10 | 22 | 39 | 50 | 12337 - without avg timer latency
 --------------------------- Test miss cache --------------------------------------
 Vanilla LRUCache (size 1000, res=0):
- Throughput of getting 10000000 values from LRUCache 225348313 nsec
- Latency of getting value from LRUCache: min=21 nsec; 50%=38 nsec; 95%=81 nsec; 99%=105 nsec; max=17712 nsec
+ Throughput of getting 10000000 values from LRUCache 276239983 nsec
+ Latency of getting value from LRUCache: min=22 nsec; 50%=49 nsec; 95%=86 nsec; 99%=108 nsec; max=12284 nsec
  summ= 0
-	21 | 38 | 81 | 105 | 17712
+	22 | 49 | 86 | 108 | 12284
+	4 | 31 | 68 | 90 | 12266 - without avg timer latency
 CustLRUCache (size 1000, summ=0):
- Throughput of getting 10000000 values from CustLRUCache 245731806 nsec
- Latency of getting value from CustLRUCache: min=22 nsec; 50%=42 nsec; 95%=75 nsec; 99%=94 nsec; max=14469 nsec
+ Throughput of getting 10000000 values from CustLRUCache 243769437 nsec
+ Latency of getting value from CustLRUCache: min=22 nsec; 50%=42 nsec; 95%=75 nsec; 99%=95 nsec; max=15091 nsec
 Summ=0
-	22 | 42 | 75 | 94 | 14469
+	22 | 42 | 75 | 95 | 15091
+	4 | 24 | 57 | 77 | 15073 - without avg timer latency
 CustLRUCacheSplit (size 1000, summ=0):
- Throughput of getting 10000000 values from CustLRUCacheSplit 244798651 nsec
- Latency of getting value from CustLRUCacheSplit: min=21 nsec; 50%=42 nsec; 95%=74 nsec; 99%=92 nsec; max=11342 nsec
+ Throughput of getting 10000000 values from CustLRUCacheSplit 240963661 nsec
+ Latency of getting value from CustLRUCacheSplit: min=21 nsec; 50%=42 nsec; 95%=75 nsec; 99%=95 nsec; max=12540 nsec
 Summ=0
-	21 | 42 | 74 | 92 | 11342
+	21 | 42 | 75 | 95 | 12540
+	3 | 24 | 57 | 77 | 12522 - without avg timer latency
 CustLRUCacheCHV (size 1000, summ=0):
- Throughput of getting 10000000 values from CustLRUCacheCHV 167001618 nsec
- Latency of getting value from CustLRUCacheCHV: min=22 nsec; 50%=37 nsec; 95%=48 nsec; 99%=57 nsec; max=11216 nsec
+ Throughput of getting 10000000 values from CustLRUCacheCHV 165114449 nsec
+ Latency of getting value from CustLRUCacheCHV: min=22 nsec; 50%=37 nsec; 95%=49 nsec; 99%=58 nsec; max=10450 nsec
 Summ=0
-	22 | 37 | 48 | 57 | 11216
-========================================================================================================================
+	22 | 37 | 49 | 58 | 10450
+	4 | 19 | 31 | 40 | 10432 - without avg timer latency
+==============================================================================================================================
 Key-values were generated...
 Key were prepared...
 Hit/Miss keys were generated...
+ Throughput of get_timer 10000000 time is 189740586 nsec, avg=18nsec per call
+ Latency of get_timer: min=15 nsec; 50%=19 nsec; 95%=23 nsec; 99%=24 nsec; max=11553 nsec
+	15 | 19 | 23 | 24 | 11553
+-------------------------- Test add to cache ---------------------------------------
 Vanilla LRUCache (size 10000):
- Throughput of adding 10000000 values into LRUCache 1972771068 nsec
- Latency of adding into LRUCache: min=74 nsec; 50%=206 nsec; 95%=305 nsec; 99%=357 nsec; max=289374 nsec
-	74 | 206 | 305 | 357 | 289374
+ Throughput of adding 10000000 values into LRUCache 2038903166 nsec
+ Latency of adding into LRUCache: min=74 nsec; 50%=219 nsec; 95%=323 nsec; 99%=442 nsec; max=12000 nsec
+	74 | 219 | 323 | 442 | 12000
+	56 | 201 | 305 | 424 | 11982 - without avg timer latency
 CustLRUCache (size 10000):
- Throughput of adding 10000000 values into CustLRUCache 1273019696 nsec
- Latency of adding into CustLRUCache: min=55 nsec; 50%=138 nsec; 95%=208 nsec; 99%=252 nsec; max=884063 nsec
-	55 | 138 | 208 | 252 | 884063
+ Throughput of adding 10000000 values into CustLRUCache 1513702014 nsec
+ Latency of adding into CustLRUCache: min=58 nsec; 50%=159 nsec; 95%=239 nsec; 99%=283 nsec; max=3188944 nsec
+	58 | 159 | 239 | 283 | 3188944
+	40 | 141 | 221 | 265 | 3188926 - without avg timer latency
 CustLRUCacheSplit (size 10000):
- Throughput of adding 10000000 values into CustLRUCacheSplit 1303043118 nsec
- Latency of adding into CustLRUCacheSplit: min=58 nsec; 50%=139 nsec; 95%=210 nsec; 99%=253 nsec; max=752277 nsec
-	58 | 139 | 210 | 253 | 752277
+ Throughput of adding 10000000 values into CustLRUCacheSplit 1536905907 nsec
+ Latency of adding into CustLRUCacheSplit: min=58 nsec; 50%=157 nsec; 95%=238 nsec; 99%=281 nsec; max=738684 nsec
+	58 | 157 | 238 | 281 | 738684
+	40 | 139 | 220 | 263 | 738666 - without avg timer latency
 CustLRUCacheCHV (size 10000):
- Throughput of adding 10000000 values into CustLRUCacheCHV 434141667 nsec
- Latency of adding into CustLRUCacheCHV: min=39 nsec; 50%=61 nsec; 95%=87 nsec; 99%=101 nsec; max=14309 nsec
-	39 | 61 | 87 | 101 | 14309
+ Throughput of adding 10000000 values into CustLRUCacheCHV 433988326 nsec
+ Latency of adding into CustLRUCacheCHV: min=40 nsec; 50%=60 nsec; 95%=88 nsec; 99%=103 nsec; max=11217 nsec
+	40 | 60 | 88 | 103 | 11217
+	22 | 42 | 70 | 85 | 11199 - without avg timer latency
 -------------------------- Test hit cache ---------------------------------------
 Vanilla LRUCache (size 10000, res=49654072276780):
- Throughput of getting 10000000 values from LRUCache 1314937051 nsec
- Latency of getting value from LRUCache: min=34 nsec; 50%=141 nsec; 95%=214 nsec; 99%=251 nsec; max=193153 nsec
+ Throughput of getting 10000000 values from LRUCache 1331137988 nsec
+ Latency of getting value from LRUCache: min=35 nsec; 50%=146 nsec; 95%=221 nsec; 99%=288 nsec; max=13398 nsec
  summ= 49654072276780
-	34 | 141 | 214 | 251 | 193153
+	35 | 146 | 221 | 288 | 13398
+	17 | 128 | 203 | 270 | 13380 - without avg timer latency
 CustLRUCache (size 10000, summ=49654072276780):
- Throughput of getting 10000000 values from CustLRUCache 303010403 nsec
- Latency of getting value from CustLRUCache: min=28 nsec; 50%=72 nsec; 95%=109 nsec; 99%=129 nsec; max=12457 nsec
+ Throughput of getting 10000000 values from CustLRUCache 303015760 nsec
+ Latency of getting value from CustLRUCache: min=28 nsec; 50%=70 nsec; 95%=105 nsec; 99%=123 nsec; max=18258 nsec
 Summ=49654072276780
-	28 | 72 | 109 | 129 | 12457
+	28 | 70 | 105 | 123 | 18258
+	10 | 52 | 87 | 105 | 18240 - without avg timer latency
 CustLRUCacheSplit (size 10000, summ=49654072276780):
- Throughput of getting 10000000 values from CustLRUCacheSplit 372977555 nsec
- Latency of getting value from CustLRUCacheSplit: min=28 nsec; 50%=70 nsec; 95%=106 nsec; 99%=127 nsec; max=11597 nsec
+ Throughput of getting 10000000 values from CustLRUCacheSplit 360426258 nsec
+ Latency of getting value from CustLRUCacheSplit: min=28 nsec; 50%=69 nsec; 95%=103 nsec; 99%=121 nsec; max=13607 nsec
 Summ=49654072276780
-	28 | 70 | 106 | 127 | 11597
+	28 | 69 | 103 | 121 | 13607
+	10 | 51 | 85 | 103 | 13589 - without avg timer latency
 CustLRUCacheCHV (size 10000, summ=49654072276780):
- Throughput of getting 10000000 values from CustLRUCacheCHV 203266744 nsec
- Latency of getting value from CustLRUCacheCHV: min=28 nsec; 50%=49 nsec; 95%=71 nsec; 99%=82 nsec; max=11146 nsec
+ Throughput of getting 10000000 values from CustLRUCacheCHV 213879812 nsec
+ Latency of getting value from CustLRUCacheCHV: min=29 nsec; 50%=52 nsec; 95%=75 nsec; 99%=88 nsec; max=11204 nsec
 Summ=49654072276780
-	28 | 49 | 71 | 82 | 11146
+	29 | 52 | 75 | 88 | 11204
+	11 | 34 | 57 | 70 | 11186 - without avg timer latency
 --------------------------- Test miss cache --------------------------------------
 Vanilla LRUCache (size 10000, res=0):
- Throughput of getting 10000000 values from LRUCache 336500983 nsec
- Latency of getting value from LRUCache: min=22 nsec; 50%=60 nsec; 95%=132 nsec; 99%=162 nsec; max=15412 nsec
+ Throughput of getting 10000000 values from LRUCache 395999044 nsec
+ Latency of getting value from LRUCache: min=22 nsec; 50%=69 nsec; 95%=138 nsec; 99%=172 nsec; max=14658 nsec
  summ= 0
-	22 | 60 | 132 | 162 | 15412
+	22 | 69 | 138 | 172 | 14658
+	4 | 51 | 120 | 154 | 14640 - without avg timer latency
 CustLRUCache (size 10000, summ=0):
- Throughput of getting 10000000 values from CustLRUCache 296438541 nsec
- Latency of getting value from CustLRUCache: min=22 nsec; 50%=55 nsec; 95%=97 nsec; 99%=121 nsec; max=20525 nsec
+ Throughput of getting 10000000 values from CustLRUCache 332979529 nsec
+ Latency of getting value from CustLRUCache: min=22 nsec; 50%=61 nsec; 95%=117 nsec; 99%=145 nsec; max=11241 nsec
 Summ=0
-	22 | 55 | 97 | 121 | 20525
+	22 | 61 | 117 | 145 | 11241
+	4 | 43 | 99 | 127 | 11223 - without avg timer latency
 CustLRUCacheSplit (size 10000, summ=0):
- Throughput of getting 10000000 values from CustLRUCacheSplit 297022729 nsec
- Latency of getting value from CustLRUCacheSplit: min=22 nsec; 50%=55 nsec; 95%=98 nsec; 99%=123 nsec; max=11409 nsec
+ Throughput of getting 10000000 values from CustLRUCacheSplit 332876840 nsec
+ Latency of getting value from CustLRUCacheSplit: min=22 nsec; 50%=61 nsec; 95%=116 nsec; 99%=145 nsec; max=17868 nsec
 Summ=0
-	22 | 55 | 98 | 123 | 11409
+	22 | 61 | 116 | 145 | 17868
+	4 | 43 | 98 | 127 | 17850 - without avg timer latency
 CustLRUCacheCHV (size 10000, summ=0):
- Throughput of getting 10000000 values from CustLRUCacheCHV 185629090 nsec
- Latency of getting value from CustLRUCacheCHV: min=22 nsec; 50%=38 nsec; 95%=54 nsec; 99%=64 nsec; max=10506 nsec
+ Throughput of getting 10000000 values from CustLRUCacheCHV 186265302 nsec
+ Latency of getting value from CustLRUCacheCHV: min=22 nsec; 50%=38 nsec; 95%=55 nsec; 99%=66 nsec; max=10743 nsec
 Summ=0
-	22 | 38 | 54 | 64 | 10506
+	22 | 38 | 55 | 66 | 10743
+	4 | 20 | 37 | 48 | 10725 - without avg timer latency
