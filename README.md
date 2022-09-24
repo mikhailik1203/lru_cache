@@ -2,12 +2,18 @@
 Low latency LRU cache 
 
 LRUCache - vanilla implementation of the LRU cache, based on std::unordered_map and std::list containers - used to compare performance.
+
 CustLRUCache - custom implementation, based on std::unordered_map and std::vector containers to reduce mem allocations.
+
 CustLRUCacheSplit - custom implementation, based on std::unordered_map and separate std::vector containers for keys and values.
+
 HashVector - custom hash table implementation, based on std::vector container - it preallocates space, because maximum number elements is known.
+
 CustLRUCacheCHV - custom implementation, based on HashVector and separate std::vector containers for keys and values.
 
+
 Benchmarks inserts 10mln int key-values pairs to the cache. Cache size is 1000 and 10000 elements:
+
 Throughput (nsec) of adding 10,000,000 elements to the cache:
 Container | Cache size 1000elem | Cache size 10000elem 
 --- | --- | --- 
@@ -33,6 +39,7 @@ CustLRUCacheSplit | 58 | 139 | 210 | 253 | 752277
 CustLRUCacheCHV | 39 | 61 | 87 | 101 | 14309
 
 Benchmarks retrieves values of 10mln int existing keys from cache. Cache size is 1000 and 10000 elements:
+
 Throughput (nsec) of getting of 10,000,000 elements from the cache:
 Container | Cache size 1000elem | Cache size 10000elem 
 --- | --- | --- 
@@ -58,6 +65,7 @@ CustLRUCacheSplit | 28 | 70 | 106 | 127 | 11597
 CustLRUCacheCHV | 28 | 49 | 71 | 82 | 11146
 
 Benchmarks retrieves values of 10mln int not-existing keys from cache (cache-miss scenario). Cache size is 1000 and 10000 elements:
+
 Throughput (nsec) of getting of 10,000,000 missed elements from the cache:
 Container | Cache size 1000elem | Cache size 10000elem 
 --- | --- | --- 
